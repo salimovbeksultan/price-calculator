@@ -1,13 +1,38 @@
 <script>
 import accounting from '@/assets/accounting.json'
+import employee from '@/assets/employee.json'
+import oneTime from '@/assets/one-time.json'
+import soldiier from '@/assets/soldier.json'
+import payment from '@/assets/payment.json'
 
 export default {
   name: 'MainApp',
   watch: {
-    accountingType(newValue) {
-      this.children = accounting.find((element) => element.name === newValue).children
+    subType(newValue) {
+      this.children = this.parent.find((element) => element.name === newValue).children
       if (this.children) {
         this.values = Array(this.children.length).fill(null)
+      }
+    },
+    calcType(newValue) {
+      switch (newValue) {
+        case 'Бухгалтерское сопровождение':
+          this.parent = accounting
+          break
+        case 'Разовые услуги':
+          this.parent = oneTime
+          break
+        case 'Кадровый учет':
+          this.parent = employee
+          break
+        case 'Воинский учет':
+          this.parent = soldiier
+          break
+        case 'Расчёт зарплат':
+          this.parent = payment
+          break
+        default:
+          break
       }
     },
     values: {
@@ -50,7 +75,9 @@ export default {
   data() {
     return {
       accounting: accounting,
-      accountingType: null,
+      parent: accounting,
+      subType: null,
+      calcType: 'Бухгалтерское сопровождение',
       children: null,
       values: null,
       finalPrice: 0
@@ -68,10 +95,60 @@ export default {
     </header>
 
     <main>
-      <h1 class="text-body-emphasis mb-5">Бухгалтерское сопровождение</h1>
-      <div v-for="item in accounting" :key="item.name" class="form-check form-check-inline">
+      <div class="form-check form-check-inline">
         <input
-          v-model="accountingType"
+          v-model="calcType"
+          class="form-check-input"
+          type="radio"
+          id="accounting"
+          value="Бухгалтерское сопровождение"
+        />
+        <label class="form-check-label" for="accounting">Бухгалтерское сопровождение</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input
+          v-model="calcType"
+          class="form-check-input"
+          type="radio"
+          id="one-time"
+          value="Разовые услуги"
+        />
+        <label class="form-check-label" for="one-time">Разовые услуги</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input
+          v-model="calcType"
+          class="form-check-input"
+          type="radio"
+          id="employee"
+          value="Кадровый учет"
+        />
+        <label class="form-check-label" for="employee">Кадровый учет</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input
+          v-model="calcType"
+          class="form-check-input"
+          type="radio"
+          id="soldier"
+          value="Воинский учет"
+        />
+        <label class="form-check-label" for="soldier">Воинский учет</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input
+          v-model="calcType"
+          class="form-check-input"
+          type="radio"
+          id="payment"
+          value="Расчёт зарплат"
+        />
+        <label class="form-check-label" for="payment">Расчёт зарплат</label>
+      </div>
+      <h1 class="text-body-emphasis mb-5">{{ calcType }}</h1>
+      <div v-for="item in parent" :key="item.name" class="form-check form-check-inline">
+        <input
+          v-model="subType"
           class="form-check-input"
           type="radio"
           :id="`${item.name}-input`"
